@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="logo-wish">
+        <a href="../Index.html"><img class="logo-wish" src="../img/logo.png" alt=""></a>
+    </div>
+    <div class="box-dados">
+        <h2>Calcule quantas primogens você pode fazer no mês</h2>
+        <div class="text-primogen">
+            <p>Missões Diarias: 60 <img style="width: 8%; margin-top: 0px; margin-left: 5px; " src="../img/primogen.png" alt=""></p>
+            <p>Abismo(mês): 1200 <img style="width: 8%; margin-top: 0px; margin-left: 5px; " src="../img/primogen.png" alt=""></p>
+            <p>Teste Banner(mês): 40 <img style="width: 8%; margin-top: 0px; margin-left: 5px; " src="../img/primogen.png" alt=""></p>
+        </div>
+        <div class="dados">
+            Quantos dias você fez missões diarias?
+            <input class="input-calculadora" type="number" id="inp_diaria" placeholder="Dia(as)"><br>
+            Quantas primogen você fez no Abismo?
+            <input class="input-calculadora" type="number" id="inp_abismo" placeholder="0000"><br>
+            Fez o teste do banner?
+            <input class="input-calculadora" type="text" id="teste_banner" placeholder="Sim ou Não">
+        </div>
+        <div class="box_button">
+            <button class="button_calcular" onclick="calcular()">Calcular</button>
+        </div>
+    </div>
+    <div class="box-resultados">
+        <div class="resultados" id="div_resultado">
+        </div>
+        <div class="mensagem" id="div_mensagem">
+            Aventureiros não fiquem chateados, esses valores são quantias fixas que vocês podem fazer por mês, mas existe tambem eventos que vem de surpresa e vocês podem aumentar seu Farm.<br><br>
+            <b>Então não desanimem e vamos explorar esse mundo!!</b>
+        </div>
+    </div>
+</body>
+</html>
+
+
+<script>
+    function calcular() {
+        var missao_diaria = Number(inp_diaria.value)
+        var abismo = Number(inp_abismo.value)
+        var teste_personagem = teste_banner.value
+        var total_mes = (60 * 30) + 1200 + 40
+
+        if (teste_personagem == 'Sim' || teste_personagem == 'sim') {
+            div_resultado.innerHTML = `
+            <b style="font-size: 20px;">Resultado do Seu Rendimento e total dos Respectivos Mêses:<b><br>
+            Total a fazer no mês (28 dias): ${total_mes - 120}<br>
+            Total a fazer no mês (30 dias): ${total_mes}<br>
+            Total a fazer no mês (31 dias): ${total_mes + 60}<br>
+            Total que Você fez: ${(missao_diaria * 60) + abismo + 40}
+            `
+            div_mensagem.style.display = 'flex'
+        } else if (teste_personagem == 'Não' || teste_personagem == 'não' || teste_personagem == 'nao') {
+            div_resultado.innerHTML = `
+            <b style="font-size: 20px;">Resultado do Seu Rendimento e total dos Respectivos Mêses:<b><br>
+            Total a fazer no mês (28 dias): ${total_mes - 160}<br>
+            Total a fazer no mês (30 dias): ${total_mes}<br>
+            Total a fazer no mês (31 dias): ${total_mes + 100}<br>
+            Total que Você fez: ${(missao_diaria * 60) + abismo}
+            `
+            div_mensagem.style.display = 'flex'
+        }
+    }
+</script>
