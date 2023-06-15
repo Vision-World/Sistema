@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="sucesso_erro"></div>
+        <div class="box">
+            <a href="../Index.html"><img class="logo" src="../img/logo.png" alt=""></a>
+            <div class="text1">
+                <h1>Cadastre-se</h1>
+            </div>
+            <div class="input-cima">
+                <input id="ipt_nome" class="input" type="text" name="nome" placeholder="Digite seu nome">
+                <input id="ipt_sobrenome" class="input" type="text" name="sobrenome" placeholder="Digite seu sobrenome">
+            </div>
+            <div class="input-baixo">
+                <input id="cpf" class="input" type="number" name="cpf" placeholder="Digite seu cpf">
+                <input id="dataNasc" class="input" type="date" name="data">
+            </div>
+            <div class="input-embaixo">
+                <input id="apelido" class="input" type="text" name="nick" placeholder="Digite um apelido">
+                <input id="inp_email" class="input" type="email" name="email" placeholder="Digite seu email">
+            </div>
+            <div class="input-maisembaixo">
+                <input id="ipt_senha" class="input" type="password" name="senha" placeholder="Digite sua senha">
+            </div>
+            <div class="box-b">
+                <button class="button" onclick="cadastrar()">
+                    Cadastrar
+                </button>
+            </div>
+            <div class="login">
+                <a href="./login.html">Caso ja tenha login</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    function cadastrar() {
+
+        //Recupere o valor da nova input pelo nome do id
+        // Agora vá para o método fetch logo abaixo
+        var nomeVar = ipt_nome.value;
+        var sobrenomeVar = ipt_sobrenome.value;
+        var cpfVar = cpf.value;
+        var dtNascVar = dataNasc.value
+        var nickNameVar = apelido.value
+        var emailVar = inp_email.value;
+        var senhaVar = ipt_senha.value;
+
+        console.log(nomeVar, emailVar, cpfVar,
+            senhaVar)
+
+        if (nomeVar == "" || sobrenomeVar == "" || cpfVar == "" || dtNascVar == "" || nickNameVar == "" || emailVar == "" || senhaVar == "") {
+            sucesso_erro.innerHTML = `
+
+            <div class="alerta"><img style="width: 9%; height: 60%; margin-top: 13px; margin-left: 10px;" src="../img/xzinho red.png" alt=""><h2>Todos os campos estão em branco.</h2></div>;
+            `
+            setTimeout(function () {
+                sucesso_erro.style.display = 'none';
+            }, 2000);
+            return false;
+        }
+
+        // Enviando o valor da nova input
+        fetch("/usuarios/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // crie um atributo que recebe o valor recuperado aqui
+                // Agora vá para o arquivo routes/usuario.js
+                nomeServer: nomeVar,
+                sobrenomeServer: sobrenomeVar,
+                cpfServer: cpfVar,
+                dtNascServer: dtNascVar,
+                nickNameServer: nickNameVar,
+                emailServer: emailVar,
+                senhaServer: senhaVar
+            })
+
+        }).then(function (resposta) {
+
+            console.log("resposta: ", resposta);
+
+            if (resposta.ok) {
+
+                sucesso_erro.innerHTML = `
+                <div class="alerta2"><img style="width: 9%; height: 60%; margin-top: 13px; margin-left: 10px;" src="../img/certinho azul.png" alt=""><h2 style="text-align: center; margin-top: 7px; margin-left: -10px;">Cadastro realizado com sucesso! Redirecionando para tela de Login...</h2></div>;`;
+                setTimeout(() => {
+                    window.location = "./login.html";
+                }, "2000")
+
+            } else {
+                sucesso_erro.innerHTML = `
+
+                <div class="alerta"><img style="width: 9%; height: 60%; margin-top: 13px; margin-left: 10px;" src="../img/xzinho red.png" alt=""><h2>Houve um erro ao tentar realizar o cadastro!.</h2></div>;`;
+                
+                setTimeout(function () {
+                    sucesso_erro.style.display = 'none';
+                }, 2000);
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+        });
+
+        return false;
+
+    }
+</script>

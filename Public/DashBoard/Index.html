@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+
+    <script src="./Gacha.js"></script>
+</head>
+<body>
+    <section class="navbar">
+        <div class="navbar">
+            <a href="../Index.html"><img class="saida_img" src="../img/logout.png" alt=""></a>
+            <a href="./dashboard.html"><img class="grafico_img" src="../img/grafico dourado.png" alt=""></a> 
+            <a href="./Index.html"><img class="portal_img" src="../img/portal novo dourado.png" alt=""></a>
+            <a  href="./game.html"><img class="wish_img" src="../img/imagem wish dourado.png" alt=""></a>
+        </div>
+    </section>
+
+    <section class="container_dash">
+        <div class="mensagem">
+            <h1 id="welcome">SEJA BEM-VINDO </h1>
+        </div>
+        <div class="box_texto">
+            <p>Olá Aventureiro(a) a Vision World agradece, pela preferencia, muito bem para começar porque não com uma votação para com qual banner de personagem você mais gostaria que viesse nos proximos meses, vote e compare com os outros usuarios. </p>
+        </div>
+        <div class="select_votacao">
+            <select class="select-banner" id="banners">
+                <option value="#">Selecione o banner</option>
+                <option value="Venti">Venti</option>
+                <option value="Albedo">Albedo</option>
+                <option value="Klee">Klee</option>
+                <option value="Alhaitham">Alhaitham</option>
+                <option value="Andarilho">Andarilho</option>
+                <option value="Itto">Itto</option>
+                <option value="Baizhu">Baizhu</option>
+                <option value="Cyno">Cyno</option>
+                <option value="Dehya">Dehya</option>
+                <option value="Eula">Eula</option>
+                <option value="Ganyu">Ganyu</option>
+                <option value="Hutao">Hutao</option>
+                <option value="Kazuha">Kazuha</option>
+                <option value="Ayaka">Ayaka</option>
+                <option value="Ayato">Ayato</option>
+                <option value="Nahida">Nahida</option>
+                <option value="Nilou">Nilou</option>
+                <option value="Kokomi">Kokomi</option>
+                <option value="Shenhe">Shenhe</option>
+                <option value="Raiden">Raiden</option>
+                <option value="Tartaglia">Tartaglia</option>
+                <option value="Tighnari">Tighnari</option>
+                <option value="Xiao">Xiao</option>
+                <option value="Miko">Miko</option>
+                <option value="Yelan">Yelan</option>
+                <option value="Yoimiya">Yoimiya</option>
+                <option value="Zhongli">Zhongli</option>
+            </select>
+        </div>
+        <div class="box_button2">
+            <button class="designB" onclick="votar()">Voto</button>
+        </div>
+    </section>
+</body>
+</html>
+
+<script>
+    welcome.innerHTML += sessionStorage.NOME_USUARIO;
+
+function votar() {
+
+var escolhaUsuario = document.querySelector('select').value;
+
+var idUser = sessionStorage.ID_USUARIO;
+
+if (escolhaUsuario == "") {
+    return false;
+}
+
+fetch("/medida/votar", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        escolhaUsuarioServer: escolhaUsuario,
+        idUserServer: idUser
+    })
+}).then(function (resposta) {
+    console.log("ESTOU NO THEN DO entrar()!")
+
+    if (resposta.ok) {
+        console.log(resposta);
+
+        resposta.json().then(json => {
+            console.log(json);
+            console.log(JSON.stringify(json));
+
+            // sessionStorage.EMAIL_USUARIO = json.email;
+            // sessionStorage.NOME_USUARIO = json.nome;
+            // sessionStorage.ID_USUARIO = json.idUsuario;
+
+        });
+
+    } else {
+
+        console.log("Houve um erro ao tentar realizar o login!");
+
+        resposta.text().then(texto => {
+            console.error(texto);
+        });
+    }
+
+}).catch(function (erro) {
+    console.log(erro);
+})
+
+return false;
+}
+
+</script>

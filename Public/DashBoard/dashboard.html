@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+    <!-- scripts do Chart.js - 2022-1 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="./Gacha.js"></script>
+</head>
+<body onload="obterDados()">
+    <section class="navbar">
+        <div class="navbar">
+            <a href="../Index.html"><img class="saida_img" src="../img/logout.png" alt=""></a>
+            <a href="./dashboard.html"><img class="grafico_img" src="../img/grafico dourado.png" alt=""></a> 
+            <a href="./Index.html"><img class="portal_img" src="../img/portal novo dourado.png" alt=""></a>
+            <a  href="./game.html"><img class="wish_img" src="../img/imagem wish dourado.png" alt=""></a>
+        </div>
+    </section>
+
+    <section class="container_dash">
+        teste
+        <div class="box_grafico">
+            <h2>Grafico Votação Banners</h2>
+            <div style="width: 100%;">
+                <canvas id="Banners_vote"></canvas>
+            </div>
+        </div>
+        <div class="rodape2">
+        </div>
+    </section>
+</body>
+</html>
+
+
+<script>
+    
+let proximaAtualizacao;
+function obterDados() {
+    if (proximaAtualizacao != undefined) {
+        clearTimeout(proximaAtualizacao);
+    }
+    fetch(`/medida/ultimas2`, { cache: 'no-store' }).then(function (response) {
+        if (response.ok) {
+            response.json().then(function (resposta) {
+                console.log(`data recebidos: ${JSON.stringify(resposta)}`);
+                resposta.reverse();
+
+                plotarGrafico(resposta);
+            });
+        } else {
+            console.error('Nenhum dado encontrado ou erro na API');
+        }
+    })
+        .catch(function (error) {
+            console.error(`Erro na obtenção dos data p/ gráfico: ${error.message}`);
+        });
+}
+obterDados()
+
+// var ls_nome = []
+// var ls_voto = []
+
+function plotarGrafico(resposta) {
+
+    // Criando estrutura para plotar gráfico - labels
+    let labels = [];
+
+    // Criando estrutura para plotar gráfico - data
+    /* -- Banners_vote -- */
+    let dados = {
+        labels: labels,
+        datasets: [{
+            label: "Personagem",
+            fill: false,
+            data: [],
+            backgroundColor: ['#ff7f7f'],
+            borderColor: '#ff3232',
+        }]
+    };
+
+
+    console.log('----------------------------------------------')
+    console.log('Estes dados foram recebidos pela funcao "obterDados" e passados para "plotarGrafico":')
+    console.log(resposta)
+
+    // Inserindo valores recebidos em estrutura para plotar o gráfico
+    for (i = 0; i < resposta.length; i++) {
+        var registro = resposta[i];
+        /*para ver temperature basta trocar para umidade ex dados.datasets[0].data.push(registro.umidade);*/
+        // dados.datasets[0].data.push(registro.nome);
+        labels.push(registro.nome);
+        dados.datasets[0].data.push(registro.votos);
+    }
+
+    console.log('----------------------------------------------')
+    console.log('O gráfico será plotado com os respectivos valores:')
+    console.log('Labels:')
+    console.log(labels)
+    console.log('Dados:')
+    console.log(dados.datasets)
+    console.log('----------------------------------------------')
+
+    // Criando estrutura para plotar gráfico - config
+    const config = {
+            type: 'bar',
+            data: dados,
+            options: {
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#fff'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#fff'
+                        }
+                    }
+                }
+            }
+        };
+
+
+    // Adicionando gráfico criado em div na tela
+    var contextoBanners_vote = new Chart(
+    document.getElementById('Banners_vote'),
+    config 
+    )
+    contextoBanners_vote.canvas.width = 200;
+    contextoBanners_vote.canvas.height = 100;
+    // var Banners_vote = new Chart(contextoBanners_vote,
+    // );
+
+    // const chart_votos = new Chart(
+    //         document.getElementById('chart_votos'),
+    //         config_votos
+    //     );
+    
+
+    // setTimeout(() => atualizarGrafico(dados, Banners_vote), 15000);
+}
+
+// function atualizarGrafico(dados, Banners_vote) {
+
+
+//     fetch(`/medida/tempo-real2`, { cache: 'no-store' }).then(function (response) {
+//         if (response.ok) {
+//             response.json().then(function (novoRegistro) {
+//                 obterDados();
+//                 console.log(`data recebidos: ${JSON.stringify(novoRegistro)}`);
+//                 console.log(`data atuais do gráfico:`);
+//                 console.log(dados);
+
+
+//                 if (novoRegistro[0].momento_grafico == dados.labels[dados.labels.length - 1]) {
+//                     console.log("---------------------------------------------------------------")
+//                     console.log("Como não há dados novos para captura, o gráfico não atualizará.")
+//                     console.log("Horário do novo dado capturado:")
+//                     console.log(novoRegistro[0].momento_grafico)
+//                     console.log("Horário do último dado capturado:")
+//                     console.log(dados.labels[dados.labels.length - 1])
+//                     console.log("---------------------------------------------------------------")
+//                 } else {
+//                     // tirando e colocando valores no gráfico
+//                     dados.labels.shift(); // apagar o primeiro
+//                     dados.labels.push(novoRegistro[0].momento_grafico); // incluir um novo momento
+
+//                     dados.datasets[1].data.shift();  // apagar o primeiro de umidade
+//                     dados.datasets[1].data.push(novoRegistro[0].Personagem); // incluir uma nova medida de umidade
+
+//                     dados.datasets[0].data.shift();  // apagar o primeiro de temperatura
+//                     dados.datasets[0].data.push(novoRegistro[0].perda); // incluir uma nova medida de temperatura
+
+//                     Banners_vote.update();
+//                 }
+//                 // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
+//                 proximaAtualizacao =
+//                     setTimeout(() => atualizarGrafico(dados, Banners_vote), 15000);
+
+//             });
+//         } else {
+//             console.error('Nenhum dado encontrado ou erro na API');
+//             // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
+//             proximaAtualizacao =
+//                 setTimeout(() => atualizarGrafico(dados, Banners_vote), 15000);
+//         }
+//     })
+//         .catch(function (error) {
+//             console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
+//         });
+
+//     setTimeout(() => atualizarGrafico(dados, Banners_vote), 15000);
+// }
+</script>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="sucesso_erro"></div>
+        <div class="box-login">
+            <a href="../Index.html"><img class="logo" src="../img/logo.png" alt=""></a>
+            <div class="text1-login">
+                <h1>Login</h1> 
+            </div>
+            <div class="input-cima-login">
+                <input id="inp_email" class="input_login" type="text" name="email" placeholder="Digite seu email">
+            </div>
+            <div class="input-embaixo-login">
+                <input id="ipt_senha" class="input_login" type="text" name="senha" placeholder="Digite sua senha">
+            </div>
+            <div class="box-b">
+                <button class="button" onclick="entrar()">
+                    Entrar
+                </button>
+            </div>
+            <div class="login">
+                <a href="./cadastro.html">Caso seja novo por aqui faça o seu cadastro</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+<script>
+function entrar() {
+
+    var emailVar = inp_email.value;
+    var senhaVar = ipt_senha.value;
+
+if (emailVar == "" || senhaVar == "") {
+
+  sucesso_erro.innerHTML = `
+
+  <div class="alerta"><img style="width: 9%; height: 60%; margin-top: 13px; margin-left: 10px;" src="../img/xzinho red.png" alt=""><h2>Todos os campos estão em branco.</h2></div>;`;
+
+setTimeout(function () {
+      sucesso_erro.style.display = 'none';
+  }, 2000); 
+}
+
+console.log("FORM LOGIN: ", emailVar);
+console.log("FORM SENHA: ", senhaVar);
+
+fetch("/usuarios/autenticar", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    emailServer: emailVar,
+    senhaServer: senhaVar
+  })
+}).then(function (resposta) {
+  console.log("ESTOU NO THEN DO entrar()!")
+
+  if (resposta.ok) {
+    console.log(resposta);
+
+    resposta.json().then(json => {
+      console.log(json);
+      console.log(JSON.stringify(json));
+
+      sessionStorage.ID_USUARIO = json.idUsuario;
+      sessionStorage.EMAIL_USUARIO = json.email;
+      sessionStorage.NOME_USUARIO = json.nome;
+      sessionStorage.CPF_USUARIO = json.cpf;
+      sessionStorage.TIPO_USUARIO = json.tipo;
+      sessionStorage.NIVEL_ACESSO_USUARIO = json.nivel_acesso;
+
+
+      sucesso_erro.innerHTML = `
+
+      <div class="alerta2"><img style="width: 9%; height: 60%; margin-top: 13px; margin-left: 10px;" src="../img/certinho azul.png" alt=""><h2 style="text-align: center; margin-top: 7px; margin-left: -10px;">Login realizado com sucesso! Redirecionando para tela de DashBoard...</h2></div>;`;
+
+      setTimeout(function () {
+
+        window.location = "../DashBoard/dashboard.html";
+      }, 2000); // apenas para exibir o loading
+
+    });
+
+  } else {
+
+    sucesso_erro.innerHTML = `
+    <div class="alerta"><img style="width: 9%; height: 60%; margin-top: 13px; margin-left: 10px;" src="../img/xzinho red.png" alt=""><h2>Houve um erro ao tentar realizar o Login!.</h2></div>;`;
+
+  setTimeout(function () {
+      sucesso_erro.style.display = 'none';
+  }, 2000); 
+
+    resposta.text().then(texto => {
+      console.error(texto);
+    });
+  }
+
+}).catch(function (erro) {
+  console.log(erro);
+})
+
+return false;
+}
+</script>
