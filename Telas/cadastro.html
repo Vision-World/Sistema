@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,27 +8,29 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
+        <div class="alerta" id="sucesso_erro"><img src="../img/imagem wish dourado.png" alt=""><h2>Todos os campos estão em branco.</h2></div>
         <div class="box">
-            <a href="../Index.html"><img class="logo" src="../img/logo.png" alt=""></a> 
+            <a href="../Index.html"><img class="logo" src="../img/logo.png" alt=""></a>
             <div class="text1">
-                <h1>Cadastre-se</h1> 
+                <h1>Cadastre-se</h1>
             </div>
             <div class="input-cima">
-                <input class="input" type="text" name="nome" placeholder="Digite seu nome">
-                <input class="input" type="text" name="sobrenome" placeholder="Digite seu sobrenome">
+                <input id="ipt_nome" class="input" type="text" name="nome" placeholder="Digite seu nome">
+                <input id="ipt_sobrenome" class="input" type="text" name="sobrenome" placeholder="Digite seu sobrenome">
             </div>
             <div class="input-baixo">
-                <input class="input" type="number" name="cpf" placeholder="Digite seu cpf">
-                <input class="input" type="date" name="data">
+                <input id="cpf" class="input" type="number" name="cpf" placeholder="Digite seu cpf">
+                <input id="dataNasc" class="input" type="date" name="data">
             </div>
             <div class="input-embaixo">
-                <input class="input" type="text" name="nick" placeholder="Digite um apelido">
-                <input class="input" type="email" name="email" placeholder="Digite seu email">
+                <input id="apelido" class="input" type="text" name="nick" placeholder="Digite um apelido">
+                <input id="inp_email" class="input" type="email" name="email" placeholder="Digite seu email">
             </div>
             <div class="input-maisembaixo">
-                <input class="input" type="password" name="senha" placeholder="Digite sua senha">
+                <input id="ipt_senha" class="input" type="password" name="senha" placeholder="Digite sua senha">
             </div>
             <div class="box-b">
                 <button class="button" onclick="cadastrar()">
@@ -40,10 +43,86 @@
         </div>
     </div>
 </body>
+
 </html>
 
 <script>
     function cadastrar() {
-        alert('Cadastro realizado com sucesso')
+
+        //Recupere o valor da nova input pelo nome do id
+        // Agora vá para o método fetch logo abaixo
+        var nomeVar = ipt_nome.value;
+        var sobrenomeVar = ipt_sobrenome.value;
+        var cpfVar = cpf.value;
+        var dtNascVar = dataNasc.value
+        var nickNameVar = apelido.value
+        var emailVar = inp_email.value;
+        var senhaVar = ipt_senha.value;
+
+        console.log(nomeVar, emailVar, cpfVar,
+            senhaVar)
+
+        if (nomeVar == "" || sobrenomeVar == "" || cpfVar == "" || dtNascVar == "" || nickNameVar == "" || emailVar == "" || senhaVar == "") {
+            alerta_cadastro.innerHTML = `
+
+            <div class="alert alert-3-danger">
+            <h3 class="alert-title">ERRO!</h3>
+            <p class="alert-content">Todos os campos estão em branco.</p>
+            </div>`;
+
+            setTimeout(function () {
+                alerta_cadastro.style.display = 'none';
+            }, 2000);
+            return false;
+        }
+
+        // Enviando o valor da nova input
+        fetch("/usuarios/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // crie um atributo que recebe o valor recuperado aqui
+                // Agora vá para o arquivo routes/usuario.js
+                nomeServer: nomeVar,
+                emailServer: emailVar,
+                cpfServer: cpfVar,
+                senhaServer: senhaVar
+            })
+
+        }).then(function (resposta) {
+
+            console.log("resposta: ", resposta);
+
+            if (resposta.ok) {
+
+                alerta_cadastro.innerHTML = `
+                <div class="alert alert-2-success">
+                    <h3 class="alert-title">Opa, ${nomeVar}!</h3>
+                    <p class="alert-content">Cadastro realizado com sucesso! Redirecionando para tela de Login...</p>
+                </div>`;
+                setTimeout(() => {
+                    window.location = "./index.html";
+                }, "2000")
+
+            } else {
+                alerta_cadastro.innerHTML = `
+
+                <div class="alert alert-3-danger">
+                    <h3 class="alert-title">ERRO!</h3>
+                    <p class="alert-content">Houve um erro ao tentar realizar o cadastro!.</p>
+                </div>`;
+
+                setTimeout(function () {
+                    alerta_cadastro.style.display = 'none';
+                }, 2000);
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+        });
+
+        return false;
+
     }
 </script>
